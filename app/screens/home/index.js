@@ -15,7 +15,7 @@ import {fetchData} from './apis';
 import styles from './styles';
 
 const Home = () => {
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [data, setData] = useState([]);
   const getData = async () => {
@@ -95,7 +95,7 @@ const Home = () => {
               } = {},
             }) => {
               return (
-                <View style={styles.accordian}>
+                <View key={categoryName} style={styles.accordian}>
                   <Accordian
                     mainContent={renderCategory(
                       colorCode,
@@ -105,7 +105,7 @@ const Home = () => {
                     childContent={subcategories.map(
                       ({subCategoryname, items = []}) => {
                         return (
-                          <>
+                          <View key={subCategoryname}>
                             {!!subCategoryname && (
                               <Text
                                 style={[
@@ -116,9 +116,11 @@ const Home = () => {
                               </Text>
                             )}
                             {items.map((item) => (
-                              <Text style={styles.subCategoryName}>{item}</Text>
+                              <Text key={item} style={styles.subCategoryName}>
+                                {item}
+                              </Text>
                             ))}
-                          </>
+                          </View>
                         );
                       },
                     )}

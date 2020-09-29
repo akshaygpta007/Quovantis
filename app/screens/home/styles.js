@@ -81,6 +81,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.grey,
   },
+  searchBox: {
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    backgroundColor: '#CAD3DB',
+  },
 });
 
 export default styles;

@@ -7,9 +7,9 @@ import {
   TouchableHighlight,
   View,
   Image,
+  TextInput,
 } from 'react-native';
 import Accordian from '../../../components/accordian';
-import icons from '../../constants/icons';
 import images from '../../constants/images';
 import {fetchData} from './apis';
 import styles from './styles';
@@ -39,6 +39,40 @@ const Home = () => {
     );
   };
 
+  const [searchText, setSearchText] = useState('');
+  const renderSearch = () => {
+    return <TextInput onChangeText={setSearchText} style={styles.searchBox} />;
+  };
+
+  const searchTextInLower = searchText.toLowerCase();
+
+  // Filter based on search
+  const filteredData = data.filter(
+    ({
+      category: {categoryName = '', servingSize = '', subcategories = []} = {},
+    }) => {
+      // Check if available in sub category
+      const isInSubCategories =
+        subcategories.findIndex(({subCategoryname, items = []}) => {
+          // Check if available in sub category items
+          const isInCategoryItems =
+            items.findIndex(
+              (item) => item.toLowerCase().search(searchTextInLower) > -1,
+            ) > -1;
+          return (
+            subCategoryname.toLowerCase().search(searchTextInLower) > -1 ||
+            isInCategoryItems
+          );
+        }) > -1;
+      // Check if available in category name and servig size
+      return (
+        categoryName.toLowerCase().search(searchTextInLower) > -1 ||
+        servingSize.toLowerCase().search(searchTextInLower) > -1 ||
+        isInSubCategories
+      );
+    },
+  );
+
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -49,8 +83,9 @@ const Home = () => {
           Alert.alert('Modal has been closed.');
         }}>
         <SafeAreaView style={{flex: 1}}>
+          {renderSearch()}
           <Text style={styles.heading}>Approved Foods List</Text>
-          {data.map(
+          {filteredData.map(
             ({
               category: {
                 colorCode,
@@ -59,7 +94,6 @@ const Home = () => {
                 subcategories = [],
               } = {},
             }) => {
-              console.log(subcategories, 'items');
               return (
                 <View style={styles.accordian}>
                   <Accordian
